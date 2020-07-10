@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "293281754714",
+    "firebase_url": "https://foodordering-f6648.firebaseio.com",
+    "project_id": "foodordering-f6648",
+    "storage_bucket": "foodordering-f6648.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293281754714:android:148e69db1d926e6d3fb263",
+        "android_client_info": {
+          "package_name": "com.brainean.alien.res_delivery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "293281754714-7qrdg3glds1ccajd9mbccq6hcmtqb8dq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAL_uP159HcMDuZwl98SYYmE2uo2Hpt4HM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "293281754714-7qrdg3glds1ccajd9mbccq6hcmtqb8dq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
