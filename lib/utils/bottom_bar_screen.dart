@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:res_delivery/features/favorites/favorites_screen.dart';
-import 'package:res_delivery/features/home/home_screen.dart';
-import 'package:res_delivery/features/home/widgets/drawer.dart';
+import 'file:///H:/Flutter%20Apps/ResDelivery/res_delivery/lib/features/home/presentation/home_screen.dart';
+import 'package:res_delivery/features/home/presentation/widgets/drawer.dart';
 
 class BottomBarScreen extends StatefulWidget {
   static const routeName = '/bottom_bar_screen';

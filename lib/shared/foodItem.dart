@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:res_delivery/features/details/details_argument.dart';
-import 'package:res_delivery/features/details/details_screen.dart';
-import 'package:res_delivery/features/home/widgets/section_label.dart';
+import 'file:///H:/Flutter%20Apps/ResDelivery/res_delivery/lib/features/details/presentation/details_screen.dart';
 import 'package:res_delivery/models/PopularItem.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
@@ -45,22 +44,22 @@ class FoodItem extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      bottomLeft: Radius.circular(8),
-                      topRight: Radius.circular(4),
-                      bottomRight: Radius.circular(4),
-                    ),
-                    image: DecorationImage(
-                      image: NetworkImage(item.imageUrl),
-                      fit: BoxFit.fill,
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        bottomLeft: Radius.circular(8),
+                        topRight: Radius.circular(4),
+                        bottomRight: Radius.circular(4),
+                      ),
+                      image: DecorationImage(
+                        image: NetworkImage(item.imageUrl),
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ),
-                ),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
