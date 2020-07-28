@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
         ..add(LoadImageSlider())
         ..add(LoadMealTypes())
         ..add(LoadPopulatItems()),
-      child: Scaffold(body: HomeBody()),
+      child: Scaffold(body: HomeBody(),drawer: MyDrawer(),),
     );
   }
 }

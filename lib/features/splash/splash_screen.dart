@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'file:///H:/Flutter%20Apps/ResDelivery/res_delivery/lib/features/home/presentation/home_screen.dart';
 import 'package:res_delivery/utils/bottom_bar_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -14,7 +13,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void didChangeDependencies() {
     Timer(
-      const Duration(seconds: 5),
+      const Duration(seconds: 10),
           () => Navigator.of(context).pushReplacementNamed(BottomBarScreen.routeName),
     );
     super.didChangeDependencies();

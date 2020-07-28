@@ -8,7 +8,7 @@ class PopularItem {
   final int numOfReviews;
   final int likes;
   int amount;
-  double price;
+  final double price;
   List<dynamic> ingredients = [];
 
   PopularItem({
@@ -29,7 +29,7 @@ class PopularItem {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'title': title,
-      'price': price,
+      'price': price * amount,
       'image': imageUrl,
       'id': id,
       'amount': amount,
