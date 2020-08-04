@@ -3,11 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:res_delivery/features/cart/bloc/cart_bloc.dart';
 import 'package:res_delivery/features/cart/data/cart_data_source.dart';
 import 'package:res_delivery/features/cart/domain/cart_repository.dart';
-import 'package:provider/provider.dart';
-import 'package:res_delivery/features/cart/providers/cart_provider.dart';
-import 'package:res_delivery/utils/constants.dart';
-
-import 'widgets/cart_item.dart';
 import 'widgets/cart_list.dart';
 
 class CartScreen extends StatelessWidget {

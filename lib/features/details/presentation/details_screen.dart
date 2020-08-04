@@ -11,11 +11,13 @@ import 'widgets/details_content.dart';
 class DetailsScreen extends StatelessWidget {
   static const routeName = "/details_route_name";
 
-  DetailsArgument args;
+  final DetailsArgument args;
+
+  const DetailsScreen({Key key, @required this.args}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    args = ModalRoute.of(context).settings.arguments;
+//    args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[

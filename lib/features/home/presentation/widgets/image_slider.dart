@@ -66,7 +66,7 @@ class SliderItem extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
-              Navigator.of(context)
+              Navigator.of(context,rootNavigator: true)
                   .pushNamed(ItemsScreen.routeName, arguments: item.id);
             },
             child: Stack(

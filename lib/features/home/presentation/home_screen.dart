@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:res_delivery/features/auth/screens/login_screen.dart';
@@ -7,7 +8,6 @@ import 'package:res_delivery/features/home/domain/data/image_slider_data_source.
 import 'package:res_delivery/features/home/domain/data/meal_type_data_source.dart';
 import 'package:res_delivery/features/home/domain/data/popular_items_data_source.dart';
 import 'package:res_delivery/features/home/domain/home_repository.dart';
-import 'package:res_delivery/features/home/presentation/widgets/drawer.dart';
 import 'package:res_delivery/features/items/presentation/items_screen.dart';
 import 'package:res_delivery/utils/session_management.dart';
 import 'widgets/food_types.dart';
@@ -17,7 +17,11 @@ import 'widgets/search_edit_text.dart';
 import 'widgets/section_label.dart';
 
 class HomeScreen extends StatelessWidget {
+  final GlobalKey<ScaffoldState> scaffold;
+
   static const routeName = "/home_screen";
+
+  const HomeScreen({Key key, this.scaffold}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,16 +37,23 @@ class HomeScreen extends StatelessWidget {
         ..add(LoadImageSlider())
         ..add(LoadMealTypes())
         ..add(LoadPopulatItems()),
-      child: Scaffold(body: HomeBody(),drawer: MyDrawer(),),
+      child: Scaffold(
+          body: HomeBody(
+        state: scaffold.currentState,
+      )),
     );
   }
 }
 
 class HomeBody extends StatelessWidget {
+  final ScaffoldState state;
+
+  const HomeBody({Key key, this.state}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildHomeAppBar(context),
+      appBar: buildHomeAppBar(context, state),
       backgroundColor: Colors.white70,
       body: BlocBuilder<HomeBloc, HomeState>(
         builder: (BuildContext context, HomeState state) {
@@ -51,26 +62,31 @@ class HomeBody extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else {
-            return Container(
-              color: Colors.white70,
-              child: SingleChildScrollView(
-                physics: ScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SearchEditText(
-                      onChanged: (value) {
-                        //the changed value
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    SectionLabel("Specials"),
-                    ImageSlider(),
-                    SectionLabel("Meal Type"),
-                    FoodTypes(),
-                    buildPopularItemsSection(context),
-                    PopularItems(),
-                  ],
+            return GestureDetector(
+              child: Container(
+                color: Colors.white70,
+                child: SingleChildScrollView(
+                  physics: ScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SearchEditText(
+                        onChanged: (value) {
+                          //the changed value
+                        },
+                        onQuerySubmitted: (value) {
+                          //the submitted value
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      SectionLabel("Specials"),
+                      ImageSlider(),
+                      SectionLabel("Meal Type"),
+                      FoodTypes(),
+                      buildPopularItemsSection(context),
+                      PopularItems(),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -91,7 +107,7 @@ Row buildPopularItemsSection(BuildContext context) {
         child: FlatButton(
           textColor: Theme.of(context).accentColor,
           child: Text("See All"),
-          onPressed: () => Navigator.of(context)
+          onPressed: () => Navigator.of(context, rootNavigator: true)
               .pushNamed(ItemsScreen.routeName, arguments: "chicken"),
         ),
       )
@@ -99,13 +115,13 @@ Row buildPopularItemsSection(BuildContext context) {
   );
 }
 
-AppBar buildHomeAppBar(BuildContext context) {
+AppBar buildHomeAppBar(BuildContext context, ScaffoldState scaffold) {
   return AppBar(
     leading: IconButton(
       icon: Icon(Icons.menu),
       color: Theme.of(context).primaryColor,
       onPressed: () {
-        Scaffold.of(context).openDrawer();
+        scaffold.openDrawer();
       },
     ),
     title: Text(
@@ -122,18 +138,18 @@ AppBar buildHomeAppBar(BuildContext context) {
           print("is user loggedIn ? ${SessionManagement.isLoggedIn()}");
           print("is user loggedIn ? ${SessionManagement.isLoggedIn()}");
           if (SessionManagement.isLoggedIn()) {
-            Navigator.of(context).pushNamed(CartScreen.routeName);
+            Navigator.of(context, rootNavigator: true)
+                .pushNamed(CartScreen.routeName);
           } else {
-            Scaffold.of(context).showSnackBar(
+            scaffold.showSnackBar(
               SnackBar(
                 behavior: SnackBarBehavior.fixed,
                 content: Text("You must be logged in!"),
                 action: SnackBarAction(
-                  label: "login".toUpperCase(),
-                  textColor: Theme.of(context).accentColor,
-                  onPressed: () =>
-                      Navigator.of(context).pushNamed(LoginScreen.routeName),
-                ),
+                    label: "login".toUpperCase(),
+                    textColor: Theme.of(context).accentColor,
+                    onPressed: () => Navigator.of(context, rootNavigator: true)
+                        .pushNamed(LoginScreen.routeName)),
               ),
             );
           }

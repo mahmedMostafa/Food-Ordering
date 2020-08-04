@@ -1,16 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:res_delivery/features/auth/blocs/login/login_bloc.dart';
 import 'package:res_delivery/features/auth/repositories/auth_repository.dart';
 import 'package:res_delivery/features/auth/screens/register_screen.dart';
-import 'package:res_delivery/features/auth/services/auth_service.dart';
 import 'package:res_delivery/features/auth/validators.dart';
-import 'package:res_delivery/utils/bottom_bar_screen.dart';
 import 'package:res_delivery/utils/constants.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatelessWidget {
   static const routeName = "/login_route_name";
@@ -83,8 +79,8 @@ class LoginForm extends StatelessWidget {
               Duration(hours: 1));
         }
         if (state is LoginSuccess) {
-          //to let the user get back to wherever he was
-          Navigator.of(context).pop();
+          //to let the user get back to wherever he was but here i had to rebuild home for the drawer
+          Navigator.of(context,rootNavigator: true).pop();
         }
       },
       builder: (BuildContext context, LoginState state) {
@@ -143,7 +139,7 @@ class LoginForm extends StatelessWidget {
                           height: 50,
                         ),
                         Container(
-                          height: 55,
+                          height: 45,
                           width: double.infinity,
                           child: RaisedButton(
                             color: Theme.of(context).accentColor,
@@ -153,6 +149,27 @@ class LoginForm extends StatelessWidget {
                             ),
                             child: Text(
                               "Sign In".toUpperCase(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          height: 45,
+                          width: double.infinity,
+                          child: RaisedButton.icon(
+                            color: Colors.red,
+                            onPressed: () => BlocProvider.of<LoginBloc>(context)
+                                .add(LoginWithGooglePressed()),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            icon: Icon(FontAwesomeIcons.google,
+                                color: Colors.white),
+                            label: Text(
+                              "Continue with Gmail".toUpperCase(),
                               style: TextStyle(color: Colors.white),
                             ),
                           ),

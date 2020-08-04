@@ -63,7 +63,7 @@ Widget _buildFooType(MealType item, BuildContext context) {
           else if (item.title == "Drinks")
             query = "juice";
           else if (item.title == "Dinner") query = "burger";
-          Navigator.of(context)
+          Navigator.of(context,rootNavigator: true)
               .pushNamed(ItemsScreen.routeName, arguments: query);
         },
         child: Padding(

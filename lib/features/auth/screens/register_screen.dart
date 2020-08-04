@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:res_delivery/features/auth/blocs/register/register_bloc.dart';
 import 'package:res_delivery/features/auth/repositories/auth_repository.dart';
-import 'package:res_delivery/features/auth/services/auth_service.dart';
 import 'package:res_delivery/utils/bottom_bar_screen.dart';
 import 'package:res_delivery/utils/constants.dart';
 

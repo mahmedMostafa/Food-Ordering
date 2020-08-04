@@ -8,13 +8,16 @@ import 'package:res_delivery/shared/foodItem.dart';
 class ItemsScreen extends StatelessWidget {
   static const routeName = "/item_screen_route";
 
+  final String query;
+
+  const ItemsScreen({Key key, @required this.query}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final query = ModalRoute.of(context).settings.arguments as String;
     print("Query is $query");
     return Scaffold(
       appBar: AppBar(
-        title: Text("Popular Items"),
+        title: Text(query),
       ),
       body: BlocProvider<ItemsBloc>(
         create: (context) => ItemsBloc(

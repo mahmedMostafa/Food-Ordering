@@ -18,9 +18,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc(this._authRepository) : super(LoginInitial());
 
   @override
-  Stream<LoginState> mapEventToState(
-    LoginEvent event,
-  ) async* {
+  Stream<LoginState> mapEventToState(LoginEvent event) async* {
     if (event is LoginWithGooglePressed) {
       yield* _mapLoginWithGooglePressedToState();
     } else if (event is LoginWithCredentialsPressed) {
@@ -31,8 +29,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-  Stream<LoginState> _mapLoginWithCredentialsToState(
-      String email, String password) async* {
+  Stream<LoginState> _mapLoginWithCredentialsToState(String email,
+      String password) async* {
     yield LoginInProgress();
     try {
       await _authRepository.loginUser(email, password);
@@ -50,7 +48,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       String errorMessage = 'Login Failed.';
       if (error.toString().contains("ERROR_NETWORK_REQUEST_FAILED")) {
         errorMessage = "No Network Available";
-      }else if (error.toString().contains("ERROR_WRONG_PASSWORD")) {
+      } else if (error.toString().contains("ERROR_WRONG_PASSWORD")) {
         errorMessage = "Wrong Email or Password";
       }
       yield LoginFailed(errorMessage);
@@ -58,10 +56,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Stream<LoginState> _mapLoginWithGooglePressedToState() async* {
+    yield LoginInProgress();
     try {
       await _authRepository.gmailLogin();
       yield LoginSuccess();
-    } catch (_) {
+    } catch (error) {
+      print("Gmail error is $error");
       yield LoginFailed("Error");
     }
   }

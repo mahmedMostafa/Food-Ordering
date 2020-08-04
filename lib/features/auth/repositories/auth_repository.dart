@@ -1,3 +1,4 @@
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,6 +6,8 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:res_delivery/utils/session_management.dart';
 
 class AuthRepository {
+  //i'm just too lazy to inject them :D
+  final _googleSignIn = GoogleSignIn();
   final _root = Firestore.instance.collection("users");
   final _auth = FirebaseAuth.instance;
 
@@ -13,12 +16,22 @@ class AuthRepository {
         email: email, password: password);
     print("Gemy called from here");
     await _root.document(_user.user.uid).get().then((document) {
-      return SessionManagement.saveUserData(email, document.data['name'], _user.user.uid);
+      return SessionManagement.saveUserData(
+          email, document.data['name'], _user.user.uid);
     });
   }
 
-  Future gmailLogin() async {
-    return Future.delayed(Duration(seconds: 3));
+  Future<void> gmailLogin() async {
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    final firebaseUser = await _auth.signInWithCredential(credential);
+    return SessionManagement.saveUserData(firebaseUser.user.email,
+        firebaseUser.user.displayName, firebaseUser.user.uid);
   }
 
   Future registerUser(String email, String password, String name) async {
@@ -26,7 +39,8 @@ class AuthRepository {
         email: email, password: password);
     final userId = _user.user.uid;
     await SessionManagement.saveUserData(email, name, userId);
-    print("Saved Data ${SessionManagement.getValue(SessionManagement.USER_ID_KEY)}");
+    print(
+        "Saved Data ${SessionManagement.getValue(SessionManagement.USER_ID_KEY)}");
     return await _root.document(userId).setData({'email': email, 'name': name});
   }
 

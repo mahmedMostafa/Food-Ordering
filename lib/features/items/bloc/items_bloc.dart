@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:res_delivery/features/items/domain/items_repository.dart';
 import 'package:res_delivery/models/PopularItem.dart';
+
 part 'items_event.dart';
 
 part 'items_state.dart';
@@ -38,7 +39,7 @@ class ItemsBloc extends Bloc<ItemsEvent, ItemsState> {
           if (currentState is ItemsInitial) {
             yield ItemsLoaded(
               items: result,
-              hasReachedMax: false,
+              hasReachedMax: (result.length < 30) ? true : false,
             );
           } else if (currentState is ItemsLoaded) {
             yield ItemsLoaded(
