@@ -1,17 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:res_delivery/features/auth/services/auth_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:res_delivery/features/auth/blocs/register/register_bloc.dart';
+import 'package:res_delivery/features/auth/repositories/auth_repository.dart';
 import 'package:res_delivery/utils/bottom_bar_screen.dart';
 import 'package:res_delivery/utils/constants.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends StatelessWidget {
   static const routName = '/register_route';
 
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (ctx) => RegisterBloc(authRepository: AuthRepository()),
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/register_background.png'),
+              fit: BoxFit.fill),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.black.withOpacity(.32),
+          body: RegisterForm(),
+        ),
+      ),
+    );
+  }
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
-  final _auth = AuthService();
+class RegisterForm extends StatelessWidget {
   final _form = GlobalKey<FormState>();
 
   String _email = "";
@@ -19,33 +35,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _name = "";
   var _isLoading = false;
 
-  void submitForm() async {
+  void submitForm(BuildContext context) {
     if (_form.currentState.validate()) {
-      print("Email is $_email and password is $_password");
-      setState(() => _isLoading = true);
-      try {
-        await _auth.registerUser(_email, _password, _name);
-        setState(() => _isLoading = false);
-        Navigator.of(context).pushNamed(BottomBarScreen.routeName);
-      } catch (error) {
-        setState(() => _isLoading = false);
-        print(error.toString());
-      }
+      BlocProvider.of<RegisterBloc>(context).add(
+        RegisterWithCredentials(
+            name: _name, email: _email, password: _password),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage('assets/register_background.png'),
-            fit: BoxFit.fill),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.black.withOpacity(.32),
-        body: Stack(
+    return BlocConsumer<RegisterBloc, RegisterState>(
+      listener: (context, state) {
+        if (state is RegisterInProgress) {
+          buildSnackBar(
+            context,
+            [
+              Text(
+                'Signing up...',
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                ),
+                height: 28,
+                width: 28,
+              )
+            ],
+            Theme.of(context).snackBarTheme.backgroundColor,
+          );
+        } else if (state is RegisterFailed) {
+          buildSnackBar(context, [Text(state.errorMessage), Icon(Icons.error)],
+              Theme.of(context).errorColor);
+        } else if (state is RegisterSuccess) {
+          Navigator.of(context).pushNamed(BottomBarScreen.routeName);
+        }
+      },
+      builder: (context, state) {
+        return Stack(
           children: <Widget>[
             Form(
               key: _form,
@@ -91,15 +121,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         decoration: formDecoration("Password"),
                         obscureText: true,
                         onChanged: (value) => _password = value,
-                        onSaved: (value) {
-                          submitForm();
-                        },
+                        onSaved: (value) => submitForm(context),
                       ),
                       SizedBox(
                         height: 50,
                       ),
                       InkWell(
-                        onTap: submitForm,
+                        onTap: () => submitForm(context),
                         child: Container(
                           width: double.infinity,
                           height: 55,
@@ -146,8 +174,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             )
           ],
-        ),
-      ),
+        );
+      },
     );
+  }
+
+  void buildSnackBar(BuildContext context, List<Widget> widgets, Color color) {
+    Scaffold.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: widgets,
+          ),
+          backgroundColor: color,
+        ),
+      );
   }
 }

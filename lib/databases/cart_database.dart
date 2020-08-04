@@ -29,6 +29,6 @@ class CartDatabase {
   static Future<void> updateAmount(PopularItem data, bool increase) async {
     final db = await database();
     data.amount = increase ? data.amount++ : data.amount--;
-    return db.update("user_car", data.toMap(), where: "id = ?");
+    return db.update("user_cart", data.toMap(), where: "id = ?",whereArgs: [data.id]);
   }
 }

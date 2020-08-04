@@ -1,6 +1,8 @@
 import 'dart:ffi';
 import 'dart:math';
-
+import 'package:res_delivery/features/favorites/favorites_screen.dart';
+import 'package:res_delivery/features/categories/categories_screen.dart';
+import 'package:res_delivery/features/home/presentation/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

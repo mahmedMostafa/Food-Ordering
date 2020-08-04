@@ -1,53 +1,90 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:res_delivery/features/auth/blocs/login/login_bloc.dart';
+import 'package:res_delivery/features/auth/repositories/auth_repository.dart';
 import 'package:res_delivery/features/auth/screens/register_screen.dart';
-import 'package:res_delivery/features/auth/services/auth_service.dart';
-import 'package:res_delivery/utils/bottom_bar_screen.dart';
+import 'package:res_delivery/features/auth/validators.dart';
 import 'package:res_delivery/utils/constants.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:http/http.dart' as http;
 
-class LoginScreen extends StatefulWidget {
-  static const routeName = "login_route";
+class LoginScreen extends StatelessWidget {
+  static const routeName = "/login_route_name";
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (BuildContext context) => LoginBloc(AuthRepository()),
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/login_background.png'),
+              fit: BoxFit.fill),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.black.withOpacity(.62),
+          body: LoginForm(),
+        ),
+      ),
+    );
+  }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final _auth = AuthService();
+class LoginForm extends StatelessWidget {
   final _form = GlobalKey<FormState>();
   String email = "";
   String password = "";
-  var _isLoading = false;
 
-  void submitForm() async {
+  void _onFormSubmitted(BuildContext context) {
     if (_form.currentState.validate()) {
-      print("Email is $email and password is $password");
-      setState(() => _isLoading = true);
-      try {
-        await _auth.loginUser(email, password);
-        setState(() => _isLoading = false);
-        Navigator.of(context).pushNamed(BottomBarScreen.routeName);
-      } catch (error) {
-        setState(() => _isLoading = false);
-        print(error.toString());
-      }
+      BlocProvider.of<LoginBloc>(context).add(
+        LoginWithCredentialsPressed(
+          email: email.trim(),
+          password: password.trim(),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage('assets/login_background.png'), fit: BoxFit.fill),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.black.withOpacity(.62),
-        body: Stack(
+    return BlocConsumer<LoginBloc, LoginState>(
+      listener: (BuildContext ctx, LoginState state) {
+        if (state is LoginFailed) {
+          buildSnackBar(
+            context,
+            [Text(state.errorMessage), Icon(Icons.error)],
+            Theme.of(context).errorColor,
+            Duration(seconds: 3),
+          );
+        }
+        if (state is LoginInProgress) {
+          buildSnackBar(
+              context,
+              [
+                Text(
+                  'Logging In...',
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                  height: 28,
+                  width: 28,
+                )
+              ],
+              Theme.of(context).snackBarTheme.backgroundColor,
+              Duration(hours: 1));
+        }
+        if (state is LoginSuccess) {
+          //to let the user get back to wherever he was but here i had to rebuild home for the drawer
+          Navigator.of(context,rootNavigator: true).pop();
+        }
+      },
+      builder: (BuildContext context, LoginState state) {
+        return Stack(
           children: <Widget>[
             Form(
               key: _form,
@@ -70,8 +107,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         TextFormField(
                           keyboardType: TextInputType.emailAddress,
-                          validator: (value) =>
-                              !value.contains("@") ? "Enter valid email" : null,
+                          validator: (value) => !Validators.isValidEmail(value)
+                              ? "Enter valid email"
+                              : null,
                           style: TextStyle(color: Colors.white),
                           decoration: formDecoration("Email"),
                           onChanged: (value) => email = value,
@@ -81,14 +119,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         TextFormField(
                           validator: (value) =>
-                              value.length < 6 ? "Password is too small" : null,
+                              !Validators.isValidPassword(value)
+                                  ? "Password must be more than 6 chars"
+                                  : null,
                           style: TextStyle(color: Colors.white),
                           decoration: formDecoration("Password"),
                           obscureText: true,
                           onChanged: (value) => password = value,
-                          onSaved: (value) {
-                            submitForm();
-                          },
+                          onSaved: (value) => _onFormSubmitted(context),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0),
@@ -100,19 +138,39 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(
                           height: 50,
                         ),
-                        InkWell(
-                          onTap: submitForm,
-                          child: Container(
-                            width: double.infinity,
-                            height: 55,
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).accentColor,
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Center(
-                              child: Text(
-                                "Sign in".toUpperCase(),
-                                style: TextStyle(color: Colors.white),
-                              ),
+                        Container(
+                          height: 45,
+                          width: double.infinity,
+                          child: RaisedButton(
+                            color: Theme.of(context).accentColor,
+                            onPressed: () => _onFormSubmitted(context),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              "Sign In".toUpperCase(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          height: 45,
+                          width: double.infinity,
+                          child: RaisedButton.icon(
+                            color: Colors.red,
+                            onPressed: () => BlocProvider.of<LoginBloc>(context)
+                                .add(LoginWithGooglePressed()),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            icon: Icon(FontAwesomeIcons.google,
+                                color: Colors.white),
+                            label: Text(
+                              "Continue with Gmail".toUpperCase(),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ),
@@ -136,13 +194,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             )
                           ],
                         ),
-                        if (_isLoading)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          )
                       ],
                     ),
                   ),
@@ -150,10 +201,24 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             )
           ],
-        ),
-      ),
+        );
+      },
     );
   }
+
+  void buildSnackBar(BuildContext context, List<Widget> widgets, Color color,
+      Duration duration) {
+    Scaffold.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: widgets,
+          ),
+          backgroundColor: color,
+          duration: duration,
+        ),
+      );
+  }
 }
-
-

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "293281754714-mf5e6mkesenh186q29f9js4nkt1mqohv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.brainean.alien.res_delivery",
+            "certificate_hash": "db7c5e82641b980e7b577034122231e240bdeab7"
+          }
+        },
+        {
           "client_id": "293281754714-7qrdg3glds1ccajd9mbccq6hcmtqb8dq.apps.googleusercontent.com",
           "client_type": 3
         }

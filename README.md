@@ -1,16 +1,29 @@
 # res_delivery
 
-A new Flutter application.
+This is a flutter project which heavily depends on clean archeticute and state management
+using provider change notifier and bloc pattern 
+
+this app isn't completed yet and might not be completed at all it's just for practice
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+2 Branches:
 
-A few resources to get you started if this is your first Flutter project:
+1- Bloc Pattern : (master branch) this branch shows the different layers of the application (data , domain , bloc & representation) layers
+2- Provider Pattern : (provider branch) this branch shows the power the simplicity of using provider with change notifire 
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Both bracnhes uses:
+                   1- http package to make network requets 
+                   2- sqfilte to store data locally
+                   3- firebase auth and firestore to store the user data
+                   4- shared preferences to store key-value data mainly about the user
+                   5- material design with svg flutter, carousel slider and smooth rating bar
+                   
+App Features:
+            1- Firebase Auth(Register, Login and gmail)
+            2- Pagination with bloc and rxdart
+            3- Cart Page to handle different states
+            4- Home page showing different types of data 
+            5- Bottom Bar with back stack handeling
+            
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

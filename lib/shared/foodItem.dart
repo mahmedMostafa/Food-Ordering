@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:res_delivery/features/details/details_argument.dart';
-import 'package:res_delivery/features/details/details_screen.dart';
-import 'package:res_delivery/features/home/widgets/section_label.dart';
+import 'package:res_delivery/features/details/presentation/details_screen.dart';
 import 'package:res_delivery/models/PopularItem.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
@@ -18,16 +17,18 @@ class FoodItem extends StatelessWidget {
         onTap: () {
           //this is not usually the case since we only send the id
           //but here we generate the price and rating randomly so we send them all
-          Navigator.of(context).pushNamed(DetailsScreen.routeName,
-              arguments: DetailsArgument(
-                id: item.id,
-                imageUrl: item.imageUrl,
-                title: item.title,
-                numOfReviews: item.numOfReviews,
-                price: item.price,
-                rating: item.rating,
-                likes: item.likes,
-              ));
+          Navigator.of(context, rootNavigator: true).pushNamed(
+            DetailsScreen.routeName,
+            arguments: DetailsArgument(
+              id: item.id,
+              imageUrl: item.imageUrl,
+              title: item.title,
+              numOfReviews: item.numOfReviews,
+              price: item.price,
+              rating: item.rating,
+              likes: item.likes,
+            ),
+          );
         },
         child: Container(
           margin: EdgeInsets.all(4),
