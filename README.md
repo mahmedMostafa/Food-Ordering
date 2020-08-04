@@ -1,4 +1,4 @@
-# res_delivery
+# Food Ordering
 
 This is a flutter project which heavily depends on clean archeticute and state management
 using provider change notifier and bloc pattern 
